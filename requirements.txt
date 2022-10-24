@@ -1,5 +1,4 @@
 tensorflow
-Pillow
 io
 numpy
 cv2
