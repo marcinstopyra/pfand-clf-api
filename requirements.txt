@@ -7,3 +7,5 @@ opencv-python-headless
 matplotlib==3.4.3
 fastapi==0.85.1
 pillow==8.4.0
+uvloop
+httptools
