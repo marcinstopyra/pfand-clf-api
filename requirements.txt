@@ -1,5 +1,6 @@
 tensorflow-cpu
 gunicorn
+uvicorn
 numpy
 opencv-python==4.6.0.66
 matplotlib==3.4.3
