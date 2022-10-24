@@ -1,8 +1,9 @@
 tensorflow
-PIL
+Pillow
 io
 numpy
 cv2
 matplotlib
 os
 shutil
+fastapi
