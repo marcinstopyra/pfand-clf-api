@@ -1,5 +1,4 @@
 tensorflow
-io
 numpy
 cv2
 matplotlib
