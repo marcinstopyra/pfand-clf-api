@@ -6,3 +6,4 @@ matplotlib
 os
 shutil
 fastapi
+pillow
