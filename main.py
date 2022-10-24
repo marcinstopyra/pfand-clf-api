@@ -6,7 +6,9 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 from utils import crop_image, resize_image, preprocess_image
-import cv2
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from fastapi import FastAPI, File, UploadFile
 
