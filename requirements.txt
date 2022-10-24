@@ -3,10 +3,10 @@ gunicorn==20.1.0
 uvicorn==0.18.3
 numpy
 # opencv-python==4.6.0.66
-opencv-python-headless
+# opencv-python-headless
 matplotlib==3.4.3
 fastapi==0.85.1
 pillow==8.4.0
-python-multipart
+# python-multipart
 uvloop
 httptools
