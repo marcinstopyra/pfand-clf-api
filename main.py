@@ -8,7 +8,7 @@ import numpy as np
 from utils import crop_image, resize_image, preprocess_image
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from fastapi import FastAPI, File, UploadFile
 
@@ -70,6 +70,7 @@ async def make_prediction(file: UploadFile = File(...)):
     # make a prediction
     prediction_oh = MODEL.predict(np.array([img]), verbose=0)[0]
 
+    print(prediction_oh)
     # One_hot decoding
     prediction = one_hot_decode(prediction_oh)
 
