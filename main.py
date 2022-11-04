@@ -5,7 +5,7 @@ import tensorflow as tf
 from PIL import Image
 from io import BytesIO
 import numpy as np
-from utils import crop_image, resize_image, preprocess_image
+from utils import preprocess_image
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
