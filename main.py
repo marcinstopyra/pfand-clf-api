@@ -32,7 +32,7 @@ def one_hot_decode(pred_oh):
 
 @app.get('/')
 async def index():
-    return {"Message": "This is Index"}
+    return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
 
 
 
@@ -62,7 +62,7 @@ async def make_prediction(file: UploadFile = File(...)):
     img_arr = load_image_into_numpy_array(await file.read())
     img = Image.fromarray(img_arr)
 
-    img = preprocess_image(img, resize_factor=0.1, new_size=200)
+    img = preprocess_image(img, resize_factor=0.1, cropped_size=200)
 
     # to numpy array
     img = np.array(img)
