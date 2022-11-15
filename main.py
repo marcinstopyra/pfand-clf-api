@@ -61,6 +61,9 @@ async def make_prediction(file: UploadFile = File(...)):
     """
     img_arr = load_image_into_numpy_array(await file.read())
     img = Image.fromarray(img_arr)
+    
+    # free memory
+    del img_arr
 
     img = preprocess_image(img, resize_factor=0.1, cropped_size=200)
 
@@ -69,6 +72,9 @@ async def make_prediction(file: UploadFile = File(...)):
 
     # make a prediction
     prediction_oh = MODEL.predict(np.array([img]), verbose=0)[0]
+
+    # free memory
+    del img
 
     print(prediction_oh)
     # One_hot decoding
