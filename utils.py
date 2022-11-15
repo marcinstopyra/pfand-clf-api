@@ -1,17 +1,17 @@
 from PIL import Image, ImageOps
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import os
 import shutil
 
-def display_image(img):
-    """
-    args:
-        img
-    """
+# def display_image(img):
+#     """
+#     args:
+#         img
+#     """
     
-    plt.imshow(img)
-    plt.show()
+#     plt.imshow(img)
+#     plt.show()
 
 
 def normalize_size(img_size, default_raw_size=[6000, 8000]):
