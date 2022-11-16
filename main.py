@@ -55,7 +55,10 @@ def predictLite(image, model):
 async def index():
     # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
     content = """
-        <h1 style="text-align:center">Welcome to PFAND Classifier!</h1>
+    <div style="text-align:center">
+        <h1>Welcome to PFAND Classifier!</h1>
+        <h2><a href="https://pfand-clf.herokuapp.com/docs">API Docs</a></h2>
+    </div>
     """
     return content
 
