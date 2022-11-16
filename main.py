@@ -11,6 +11,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import HTMLResponse
 
 
 MODEL = tf.keras.models.load_model('./model/model.h5')
@@ -30,10 +31,13 @@ def one_hot_decode(pred_oh):
     pred = oh_to_true_label[np.argmax(pred_oh)]
     return pred
 
-@app.get('/')
+@app.get('/', response_class=HTMLResponse)
 async def index():
-    return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
-
+    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    content = """
+        <h1 style="text-align:center">Welcome to PFAND Classifier!</h1>
+    """
+    return content
 
 
 
