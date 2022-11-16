@@ -13,8 +13,11 @@ import tflite_runtime.interpreter as tflite
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from fastapi import FastAPI, File, UploadFile
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
+## ------------------------------------------------------------------------------------
+## Loading model and bulding API
 
 MODEL = tflite.Interpreter("./model/model.tflite")
 MODEL.allocate_tensors()
@@ -23,7 +26,7 @@ output_details = MODEL.get_output_details()
 
 
 
-app = FastAPI()
+api_app = FastAPI(title="api_app")
 
 def load_image_into_numpy_array(data):
     return np.array(Image.open(BytesIO(data)))
@@ -51,26 +54,13 @@ def predictLite(image, model):
 
     return pred
 
-@app.get('/', response_class=HTMLResponse)
-async def index():
-    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
-    content = """
-    <div style="text-align:center">
-        <h1>Welcome to PFAND Classifier!</h1>
-        <h2><a href="https://pfand-clf.herokuapp.com/docs">API Docs</a></h2>
-    </div>
-    """
-    return content
-
-
-
-@app.post("/predict_lite/")
+@api_app.post("/predict_lite/")
 async def make_prediction(file: UploadFile = File(...)):
-    """ Takes a raw image, preprocess it and then makes prediction
+    """ Takes an image raw of a bottle/can, preprocesses it so that it matches the requirenments of the model input
+    and makes a prediction using a TF Lite model
     """
     img_arr = load_image_into_numpy_array(await file.read())
     img = Image.fromarray(img_arr)
-    
 
     img = preprocess_image(img, resize_factor=0.1, cropped_size=200)
 
@@ -94,3 +84,17 @@ async def make_prediction(file: UploadFile = File(...)):
     
 
     return {"prediction": prediction, "confidence": confidence}
+
+## ------------------------------------------------------------------------------------
+## webpage
+
+app = FastAPI(title="main app")
+
+app.mount("/api", api_app)
+app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
+
+# # Render index
+# @app.get('/', response_class=HTMLResponse)
+# async def index():
+#     return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    
