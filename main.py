@@ -12,8 +12,9 @@ import tflite_runtime.interpreter as tflite
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
 ## ------------------------------------------------------------------------------------
@@ -88,13 +89,26 @@ async def make_prediction(file: UploadFile = File(...)):
 ## ------------------------------------------------------------------------------------
 ## webpage
 
+templates = Jinja2Templates(directory="ui/templates")
+
 app = FastAPI(title="main app")
 
 app.mount("/api", api_app)
-app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
+app.mount("/static", StaticFiles(directory="ui/static"), name="static")
+# app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
 
 # # Render index
-# @app.get('/', response_class=HTMLResponse)
-# async def index():
-#     return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
-    
+@app.get('/', response_class=HTMLResponse)
+def index(request: Request):
+    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get('/about', response_class=HTMLResponse)
+def index(request: Request):
+    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    return templates.TemplateResponse("about.html", {"request": request})
+
+@app.get('/howtouse', response_class=HTMLResponse)
+def index(request: Request):
+    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    return templates.TemplateResponse("howtouse.html", {"request": request})
