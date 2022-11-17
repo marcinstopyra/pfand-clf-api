@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <div class="container" id="text-box">
+        <h1>Classification results</h1>        
+        <p align="justify-center">
+            Your pfand value: <b> {{ result.prediction/100 }} &#x20AC</b>
+            <br>
+            With confidence: <b>{{ result.confidence *100 }}%</b>
+        </p>
+        {% if result.confidence < 0.5 %}
+        <p>LOW CONFIDENCE, prediction may be wrong, consider retaking picture</p>
+        {% endif %}
+        <p>
+            <a href="/" class="btn btn-lg btn-secondary fw-bold border-white bg-white">
+            Classify another item    
+            </a>
+        </p>
+    </div>
+
+{% endblock %}

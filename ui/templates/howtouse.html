@@ -2,7 +2,17 @@
 
 {% block body %}
 
-    <h1>HOW TO USE</h1>
-    ODO
 
+    <div class="container" id="text-box">
+        <h1>HOW TO USE</h1>
+        <p align="justify">
+            Take a picture of your pfand from the bird's eye view. 
+            Don't get too close, the preprocessor cuts approximately 1/4 of top and bottom and 1/3 of left and right sides of the photo
+        </p>
+        <img src="{{ url_for('static', path='images/howToTakePhoto.png') }}" alt="How to take photo">
+        <p></p>
+        <img src="{{ url_for('static', path='images/howToTakePhotoBorders.png') }}" alt="How to take photo, borders" width="60%"">
+        <p></p>
+
+    </div>
 {% endblock %}

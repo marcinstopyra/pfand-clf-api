@@ -27,7 +27,7 @@ body {
   background-size: cover; */
   background-image: 
         linear-gradient(to bottom, rgba(18,42, 66, .85), rgba(18,42, 66, .85)), 
-        url("images/background.jpg"); 
+        url("images/background3.jpg"); 
        -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -35,6 +35,7 @@ body {
         background-repeat: no-repeat;
         background-attachment: fixed;
         background-position: center; 
+
 }
 
 .cover-container {
@@ -63,4 +64,22 @@ body {
 .nav-masthead .active {
   color: #fff;
   border-bottom-color: #fff;
+}
+
+#text-box {
+  background-color: rgba(0, 0, 0, 0.25);
+  /* justify-content: center; */
+  /* max-height: 100%; */
+}
+
+img {
+  max-width: 60%;
+}
+/* For mobile view */
+@media (max-width: 1000px) {
+
+  img {
+    max-width: 90%;
+  }
+
 }

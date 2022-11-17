@@ -17,17 +17,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
-## ------------------------------------------------------------------------------------
-## Loading model and bulding API
+
 
 MODEL = tflite.Interpreter("./model/model.tflite")
 MODEL.allocate_tensors()
 input_details = MODEL.get_input_details()
 output_details = MODEL.get_output_details()
-
-
-
-api_app = FastAPI(title="api_app")
 
 def load_image_into_numpy_array(data):
     return np.array(Image.open(BytesIO(data)))
@@ -55,12 +50,12 @@ def predictLite(image, model):
 
     return pred
 
-@api_app.post("/predict_lite/")
-async def make_prediction(file: UploadFile = File(...)):
-    """ Takes an image raw of a bottle/can, preprocesses it so that it matches the requirenments of the model input
-    and makes a prediction using a TF Lite model
+def predictFullProcess(img_arr, model):
+    """ Takes an image in binary form
+    TODO
+    TODO
+    TODO
     """
-    img_arr = load_image_into_numpy_array(await file.read())
     img = Image.fromarray(img_arr)
 
     img = preprocess_image(img, resize_factor=0.1, cropped_size=200)
@@ -72,7 +67,7 @@ async def make_prediction(file: UploadFile = File(...)):
     img = img.astype(np.float32)
 
     # make a prediction
-    prediction_oh = predictLite(img, MODEL)
+    prediction_oh = predictLite(img, model)
 
     print(prediction_oh)
     # One_hot decoding
@@ -85,6 +80,20 @@ async def make_prediction(file: UploadFile = File(...)):
     
 
     return {"prediction": prediction, "confidence": confidence}
+
+## ------------------------------------------------------------------------------------
+## Loading model and bulding API
+api_app = FastAPI(title="api_app")
+
+@api_app.post("/predict_lite/")
+async def make_prediction(file: UploadFile = File(...)):
+    """ Takes an image raw of a bottle/can, preprocesses it so that it matches the requirenments of the model input
+    and makes a prediction using a TF Lite model
+    """
+    img_arr = load_image_into_numpy_array(await file.read())
+    result = predictFullProcess(img_arr, MODEL)
+
+    return result
 
 ## ------------------------------------------------------------------------------------
 ## webpage
@@ -112,3 +121,41 @@ def index(request: Request):
 def index(request: Request):
     # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
     return templates.TemplateResponse("howtouse.html", {"request": request})
+
+# @app.post("/result", response_class=HTMLResponse)
+# async def make_prediction(request: Request): #, file: UploadFile = File(...)): #,file: UploadFile = File(...)):
+#     """ TODO
+#     """
+#     # img_arr = await file.read()
+#     # img_arr = load_image_into_numpy_array(await file.read())
+#     print("udalo sie")
+#     # print(img_arr)
+#     print(dict(request))
+#     # result = predictFullProcess(img_arr, MODEL)
+
+#     return templates.TemplateResponse("result.html", {"request": request}) #, "result": result})
+
+
+@app.post("/result") #, response_class=HTMLResponse)
+async def make_prediction(request: Request, file1: UploadFile = File(default=None), file2: UploadFile = File(default=None)):
+    """ TODO
+    """
+    file1 = await file1.read()
+    file2 = await file2.read()
+
+    # img_arr = load_image_into_numpy_array(file1)
+    if len(file1) != 0:
+        file = file1
+    elif len(file2) != 0:
+        file = file2
+    else:
+        return {'msg': "error"}
+
+    img_arr = load_image_into_numpy_array(file)
+    result = predictFullProcess(img_arr, MODEL)
+
+    context = {"request": request, 
+               "result": result}
+
+    return templates.TemplateResponse("result.html", context)
+    
