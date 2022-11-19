@@ -10,7 +10,8 @@
             With confidence: <b>{{ result.confidence *100 }}%</b>
         </p>
         {% if result.confidence < 0.5 %}
-        <p>LOW CONFIDENCE, prediction may be wrong, consider retaking picture</p>
+        <p>LOW CONFIDENCE</p>
+        <p>prediction may be wrong, consider retaking picture</p>
         {% endif %}
         <p>
             <a href="/" class="btn btn-lg btn-secondary fw-bold border-white bg-white">

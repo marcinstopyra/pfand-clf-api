@@ -15,7 +15,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+
 
 
 
@@ -113,27 +114,16 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get('/about', response_class=HTMLResponse)
-def index(request: Request):
+def about(request: Request):
     # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.get('/howtouse', response_class=HTMLResponse)
-def index(request: Request):
+def howtouse(request: Request):
     # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
     return templates.TemplateResponse("howtouse.html", {"request": request})
 
-# @app.post("/result", response_class=HTMLResponse)
-# async def make_prediction(request: Request): #, file: UploadFile = File(...)): #,file: UploadFile = File(...)):
-#     """ TODO
-#     """
-#     # img_arr = await file.read()
-#     # img_arr = load_image_into_numpy_array(await file.read())
-#     print("udalo sie")
-#     # print(img_arr)
-#     print(dict(request))
-#     # result = predictFullProcess(img_arr, MODEL)
 
-#     return templates.TemplateResponse("result.html", {"request": request}) #, "result": result})
 
 
 @app.post("/result") #, response_class=HTMLResponse)
@@ -158,4 +148,8 @@ async def make_prediction(request: Request, file1: UploadFile = File(default=Non
                "result": result}
 
     return templates.TemplateResponse("result.html", context)
+
+@app.get("/result")
+async def redirect_to_index():
+    return RedirectResponse("/")
     

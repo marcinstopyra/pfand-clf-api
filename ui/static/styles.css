@@ -72,6 +72,22 @@ body {
   /* max-height: 100%; */
 }
 
+/* parent child selector
+text-align applies only to <p> inside viv class='justify' */
+div.justify > p { 
+  text-align: justify;
+}
+
+#caption {
+  font-size: small; 
+  text-align: center;
+}
+
+table {
+  margin-left:auto;
+  margin-right:auto;
+}
+
 img {
   max-width: 60%;
 }
@@ -83,3 +99,5 @@ img {
   }
 
 }
+
+
