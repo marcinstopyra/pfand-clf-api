@@ -19,7 +19,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 
 
-
+# Read TF Lite model and its details
 MODEL = tflite.Interpreter("./model/model.tflite")
 MODEL.allocate_tensors()
 input_details = MODEL.get_input_details()
@@ -28,14 +28,22 @@ output_details = MODEL.get_output_details()
 def load_image_into_numpy_array(data):
     return np.array(Image.open(BytesIO(data)))
 
-def one_hot_decode(pred_oh):
+def one_hot_decode(pred):
+    """ Function decodes the vector of class probabilities returned by the model 
+    to the clean prediction (most probable class name)
+    ---
+    args:
+        pred:           prediction in form of vector of class probabilities
+    return:
+        pred_clean:     decoded prediction in form of the most probable class name
+    """
     # One_hot decoding
     oh_to_true_label = {0: 0,
                         1: 8,
                         2: 15,
                         3: 25}
-    pred = oh_to_true_label[np.argmax(pred_oh)]
-    return pred
+    pred_clean = oh_to_true_label[np.argmax(pred)]
+    return pred_clean
 
 def predictLite(image, model):
     """Makes a prediction on a sample with a tensorflow Lite converted model
@@ -52,10 +60,15 @@ def predictLite(image, model):
     return pred
 
 def predictFullProcess(img_arr, model):
-    """ Takes an image in binary form
-    TODO
-    TODO
-    TODO
+    """ Function conducts a full process of converting image from numpy array to PIL Image, 
+    preprocessing image to proper size and resolution, makes a prediction and decodes it,
+    returning a clean prediction together with its confidence in a form of python dict
+    ---
+    args:
+        img_arr:    image in form of Numpy array
+        model:      TensorFlow Lite model used for prediction
+    returns:
+        {"prediction": prediction, "confidence": confidence}
     """
     img = Image.fromarray(img_arr)
 
@@ -83,7 +96,7 @@ def predictFullProcess(img_arr, model):
     return {"prediction": prediction, "confidence": confidence}
 
 ## ------------------------------------------------------------------------------------
-## Loading model and bulding API
+## API app
 api_app = FastAPI(title="api_app")
 
 @api_app.post("/predict_lite/")
@@ -97,7 +110,7 @@ async def make_prediction(file: UploadFile = File(...)):
     return result
 
 ## ------------------------------------------------------------------------------------
-## webpage
+## Web App
 
 templates = Jinja2Templates(directory="ui/templates")
 
@@ -105,22 +118,24 @@ app = FastAPI(title="main app")
 
 app.mount("/api", api_app)
 app.mount("/static", StaticFiles(directory="ui/static"), name="static")
-# app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
 
 # # Render index
 @app.get('/', response_class=HTMLResponse)
 def index(request: Request):
-    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    """ Function renders Index page
+    """
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get('/about', response_class=HTMLResponse)
 def about(request: Request):
-    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    """ Function renders About page
+    """
     return templates.TemplateResponse("about.html", {"request": request})
 
 @app.get('/howtouse', response_class=HTMLResponse)
 def howtouse(request: Request):
-    # return {"Message": "Welcome to PFAND CLASSIFIER 1.0"}
+    """ Function renders HowToUse page
+    """
     return templates.TemplateResponse("howtouse.html", {"request": request})
 
 
@@ -128,12 +143,15 @@ def howtouse(request: Request):
 
 @app.post("/result") #, response_class=HTMLResponse)
 async def make_prediction(request: Request, file1: UploadFile = File(default=None), file2: UploadFile = File(default=None)):
-    """ TODO
+    """ Function takes a classifier input image as POST request, puts it in the model 
+    and returns a rendered 'results' HTML template with model output (prediction plus confidence)
     """
+
+    # There are 2 possible inputs in the form - take-picture and upload-picture
+    # the function reads both and chooses the one which is not empty
     file1 = await file1.read()
     file2 = await file2.read()
 
-    # img_arr = load_image_into_numpy_array(file1)
     if len(file1) != 0:
         file = file1
     elif len(file2) != 0:
@@ -141,9 +159,12 @@ async def make_prediction(request: Request, file1: UploadFile = File(default=Non
     else:
         return {'msg': "error"}
 
+    # convert BYTE object to numpy array
     img_arr = load_image_into_numpy_array(file)
+    # Prediction
     result = predictFullProcess(img_arr, MODEL)
 
+    # prepare context to be returned in the jinja2 template
     context = {"request": request, 
                "result": result}
 
@@ -151,5 +172,7 @@ async def make_prediction(request: Request, file1: UploadFile = File(default=Non
 
 @app.get("/result")
 async def redirect_to_index():
+    """ function redirects any GET request to /results, back to index
+    """
     return RedirectResponse("/")
     
